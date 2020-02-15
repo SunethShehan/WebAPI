@@ -33,59 +33,79 @@ let heroesArry = [
 
 
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
 
-    res.send(new Hero().find());
+    await Hero.find({}).then(heroList => {
 
-});
+        return res.status(200).send(heroList)
 
-router.get('/:heroId', (req, res) => {
+    }).catch(err => {
 
-    let heroId = req.params.heroId;
+        console.error(err);
+        return res.status(500).send(err);
 
-    let hero = heroesArry.find(h => h.id == heroId);
-
-    if (!hero) {
-
-        return res.status(404).send({ Result: "Hero Not Found" });
-
-    }
-
-    return res.status(200).send(hero);
+    });
 
 });
 
+router.get('/:heroName', async (req, res) => {
 
-router.put('/:heroId', (req, res) => {
+    let heroName = req.params.heroName;
 
-    let heroId = req.params.heroId;
+    await Hero.findOne({ name: heroName }).then(hero => {
 
-    let hero = heroesArry.find(h => h.id == heroId);
+        if (!hero) {
 
-    if (!hero) {
+            return res.status(404).send({ Result: "Hero Not Found" });
 
-        return res.status(404).send({ Result: "Hero Not Found" });
+        }
 
-    }
+        return res.status(404).send(hero);
+
+    }).catch(err => {
+
+        console.error(err);
+        return res.status(500).send(err);
+
+    });
+});
+
+
+router.put('/:heroName', (req, res) => {
+
+    let heroName = req.params.heroName;
 
     let NewName = req.body.name;
     if (!NewName)
         return res.status(422).send({ InvalidInput: "name Not Found in Request Body" });
 
-    let NewSuperPower = req.body.superPower;
-    if (!NewSuperPower)
-        return res.status(422).send({ InvalidInput: "superPower Not Found in Request Body" });
+    let NewSuperPowers = req.body.superPowers;
+    if (!NewSuperPowers)
+        return res.status(422).send({ InvalidInput: "superPowers Not Found in Request Body" });
 
-    let NewAge = req.body.age;
-    if (!NewAge)
-        return res.status(422).send({ InvalidInput: "age Not Found in Request Body" });
+    let NewBirthName = req.body.birthName;
+    if (!NewName)
+        return res.status(422).send({ InvalidInput: "birth Name Not Found in Request Body" });
 
+    let NewMovies = req.body.movies;
+    if (!NewMovies)
+        return res.status(422).send({ InvalidInput: "movies Not Found in Request Body" });
 
-    heroesArry.find(h => h.id == heroId).name = NewName;
-    heroesArry.find(h => h.id == heroId).superPower = NewSuperPower;
-    heroesArry.find(h => h.id == heroId).age = NewAge;
+    Hero.findOne({ name: heroName }, (err, doc) =>{
+        doc.name = NewName,
+        doc.birthName = NewBirthName,
+        doc.superPowers = NewSuperPowers,
+        doc.deceased= false,
+        doc.likeCount = 50,
+        doc.movies = NewMovies
+        doc.save();
+    });
 
-    return res.status(200).send(heroesArry);
+    if (!hero) {
+
+        return res.status(404).send({ Result: "Hero Not Found" });
+
+    }
 
 });
 
