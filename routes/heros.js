@@ -104,22 +104,39 @@ router.post('/', async (req, res) => {
     if (!NewAge)
         return res.status(422).send({ InvalidInput: "age Not Found in Request Body" });
 
-    let heroToAdd = new Hero ({
+    let NewBirthName = req.body.birthName;
+    if (!NewName)
+        return res.status(422).send({ InvalidInput: "birth Name Not Found in Request Body" });
+
+    let heroToAdd = new Hero({
         name: NewName,
-        birthName: NewName,
+        birthName: NewBirthName,
         superPowers: [NewSuperPower],
-        deceased: false, 
+        deceased: false,
         likeCount: 50,
         movies: ["Superman"]
     });
 
 
-    heroToAdd = await heroToAdd.save()
+    // heroToAdd = await heroToAdd.save().then()
 
-    heroToAdd.save()
-    //heroesArry.push(newHero);
+    // heroToAdd.save().then(() => {
+    //     return res.status(200).send(heroToAdd);
+    // }, err => {
+    //     console.log(err);
+    //     return res.status(400).send(err);
 
-    return res.status(200).send(heroToAdd);
+    // });
+
+    try {
+        heroToAdd = await heroToAdd.save()
+        return res.status(200).send(heroToAdd);
+    }
+    catch (err) {
+
+        console.error(err);
+        return res.status(422).send(heroToAdd);
+    }
 
 });
 
