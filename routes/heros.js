@@ -96,47 +96,37 @@ router.post('/', async (req, res) => {
     if (!NewName)
         return res.status(422).send({ InvalidInput: "name Not Found in Request Body" });
 
-    let NewSuperPower = req.body.superPower;
-    if (!NewSuperPower)
-        return res.status(422).send({ InvalidInput: "superPower Not Found in Request Body" });
-
-    let NewAge = req.body.age;
-    if (!NewAge)
-        return res.status(422).send({ InvalidInput: "age Not Found in Request Body" });
+    let NewSuperPowers = req.body.superPowers;
+    if (!NewSuperPowers)
+        return res.status(422).send({ InvalidInput: "superPowers Not Found in Request Body" });
 
     let NewBirthName = req.body.birthName;
     if (!NewName)
         return res.status(422).send({ InvalidInput: "birth Name Not Found in Request Body" });
 
+    let NewMovies = req.body.movies;
+    if (!NewMovies)
+        return res.status(422).send({ InvalidInput: "movies Not Found in Request Body" });
+
     let heroToAdd = new Hero({
         name: NewName,
         birthName: NewBirthName,
-        superPowers: [NewSuperPower],
+        superPowers: NewSuperPowers,
         deceased: false,
         likeCount: 50,
-        movies: ["Superman"]
+        movies: NewMovies
     });
 
+    await heroToAdd.save().then(createdHero => {
 
-    // heroToAdd = await heroToAdd.save().then()
+        res.status(200).send(createdHero);
 
-    // heroToAdd.save().then(() => {
-    //     return res.status(200).send(heroToAdd);
-    // }, err => {
-    //     console.log(err);
-    //     return res.status(400).send(err);
-
-    // });
-
-    try {
-        heroToAdd = await heroToAdd.save()
-        return res.status(200).send(heroToAdd);
-    }
-    catch (err) {
+    }).catch(err => {
 
         console.error(err);
-        return res.status(422).send(heroToAdd);
-    }
+        return res.status(500).send(err);
+
+    });
 
 });
 
