@@ -35,8 +35,7 @@ let heroesArry = [
 
 router.get('/', (req, res) => {
 
-    res.send(heroesArry);
-
+    res.send(new Hero().find());
 
 });
 
@@ -90,7 +89,7 @@ router.put('/:heroId', (req, res) => {
 
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
 
 
     let NewName = req.body.name;
